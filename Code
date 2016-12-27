@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>blog roll</title>
+    <meta name="generator" content="SUBLIME" />
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
+<!--    <script src="js/Sortable.min.js"></script>-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <style type="text/css" media="screen">
+    	.item {
+    		height: 120px;
+    		background-color: #efefef;
+    		overflow: scroll;
+        border: 4px solid #fff;
+    	}	
+
+    	.select {
+    		background-color: #424242;
+    		color: #fff;
+    		border:none;
+    	}
+    	.numFem, .numMale, .numUn, .num {
+    		display: inline-block;
+    	}
+    </style>
+      <script type="text/javascript"> 
+      var docId = getQueryVariable("docId");
+      console.log(docId);               
+
+         var url = "https://spreadsheets.google.com/feeds/list/1FlVTUImbf0KojGamoM2C2rYaBt_txuFGFWTnV2QJgf8/1/public/values?alt=json";
+
+        $.getJSON(url, function(data) {
+
+          var html = '';
+          var entry = data.feed.entry;
+          var upperLimit = entry.length;
+          var categoryDest =[]; //hold destination array
+          
+          //get words 
+          var i = 1;
+          var numFem = 1;
+          var numMale = 1;
+		  var numUn = 1;
+
+		  var numPrimary = 1;
+		  var numMiddle = 1;
+		  var numSecondary = 1;
+		  var numHE = 1;
+		  var numVarious = 1;
+		  var numOrg = 1;
+
+          while (i < upperLimit) {
+            	
+                html = '<div class="item mix col-md-3 ' + entry[i]['gsx$where']['$t'] + ' '  + entry[i]['gsx$level']['$t'] + ' '+ entry[i]['gsx$gender']['$t']  + '"><h5><a href="' + entry[i]['gsx$url']['$t'] +'">' + entry[i]['gsx$title']['$t'] + '</a></h5><div class="main">' + entry[i]['gsx$where']['$t'] + '<br/>' +entry[i]['gsx$gender']['$t']+ '</div></div>';  
+                $('.sites').append(html);   
+
+                if (entry[i]['gsx$gender']['$t'] =="Female") {numFem++};
+                if (entry[i]['gsx$gender']['$t'] =="Male") {numMale++};
+                if (entry[i]['gsx$gender']['$t'] =="Undefined") {numUn++};
+
+                if (entry[i]['gsx$level']['$t'] =="PRIMARY") {numPrimary++};
+                if (entry[i]['gsx$level']['$t'] =="MIDDLE") {numMiddle++};
+                if (entry[i]['gsx$level']['$t'] =="SECONDARY") {numSecondary++};
+                if (entry[i]['gsx$level']['$t'] =="HIGHER-ED") {numHE++};
+                if (entry[i]['gsx$level']['$t'] =="ORG") {numOrg++};
+                if (entry[i]['gsx$level']['$t'] =="VARIOUS") {numVarious++};
+
+
+                 i++;
+            }            
+              $(".numFem").html(numFem);
+              $(".numMale").html(numMale);
+              $(".numUn").html(numUn);
+              $(".numPrimary").html(numPrimary);
+			  $(".numSecondary").html(numSecondary);	
+			  $(".numMiddle").html(numMiddle);   
+			  $(".numHE").html(numHE);
+			  $(".numOrg").html(numOrg);
+			  $(".numVarious").html(numVarious);
+        });
+
+
+        //function to get unique from array
+        function unique(array){
+            return array.filter(function(el, index, arr) {
+                return index === arr.indexOf(el);
+            });
+        }
+        
+
+            function getQueryVariable(variable)
+                {
+                       var query = window.location.search.substring(1);
+                       var vars = query.split("&");
+                       for (var i=0;i<vars.length;i++) {
+                               var pair = vars[i].split("=");
+                               if(pair[0] == variable){return pair[1];}
+                       }
+                       return(false);
+                }
+       
+  </script>
+
+</head>
+
+
+
+<body >
+    <div class="container-fluid">
+        <div class="row bar">
+            <div class="col-md-12 col-sm-12">
+                <h2>Blog Roll Data</h2><!-- HEADER -->
+                <div class="controls">
+				  <label>Gender:</label>	
+				  <button id="female">female</button> (<div class="num numFem"></div>)				  				  			  
+				  <button id="male">male</button> (<div class="num numMale"></div>)	
+				  <button id="undefined">undefined</button> (<div class="num numUn"></div>)	
+
+				  <label>Level:</label>	
+				  <button id="PRIMARY">Primary</button> (<div class="num numPrimary"></div>)	
+				  <button id="MIDDLE">Middle</button> (<div class="num numMiddle"></div>)	
+				  <button id="SECONDARY">Secondary</button> (<div class="num numSecondary"></div>)					  
+				  <button id="HIGHER-ED">Higher Ed</button> (<div class="num numHE"></div>)	
+				  <button id="ORG">Org</button> (<div class="num numOrg"></div>)					  
+				  <button id="VARIOUS">Various</button> (<div class="num numVarious"></div>)	 
+            </div>                        
+      </div>  
+
+<div class="row">
+<div class="sites col-md-12 col-sm-12" id="Container"></div>
+</div>
+
+<div class="row destination">
+</div>
+<script type="text/javascript">
+	//toggles                
+	$( "#male" ).click(function() {
+	  $("#male").toggleClass("select");	
+	  $( ".Female, .Undefined" ).toggleClass('hidden');
+    var hidMaleCount = $('.Male:visible').length;
+       var hidFemaleCount = $('.Female:visible').length;
+       var hidUnCount = $('.undefined:visible').length;
+	});
+
+	$( "#female" ).click(function() {
+	  $("#female").toggleClass("select");			
+	  $( ".Male, .Undefined" ).toggleClass('hidden');
+    var hidMaleCount = $('.Male:visible').length;
+    var hidFemaleCount = $('.Female:visible').length;
+    var hidUnCount = $('.undefined:visible').length;
+	});	
+
+	$( "#undefined" ).click(function() {
+	  $("#undefined").toggleClass("select");			
+	  $( ".Male, .Female" ).toggleClass('hidden');
+    var hidMaleCount = $('.Male:visible').length;
+    var hidFemaleCount = $('.Female:visible').length;
+    var hidUnCount = $('.undefined:visible').length;
+
+	});	
+
+toggleVar("VARIOUS");
+toggleVar("HIGHER-ED");
+toggleVar("ORG");
+toggleVar("SECONDARY");
+toggleVar("PRIMARY");
+toggleVar("MIDDLE");
+
+
+	function toggleVar (name){
+		$("#"+ name).click(function(){
+			var levels = [".PRIMARY",".MIDDLE",".SECONDARY",".HIGHER-ED",".VARIOUS",".ORG"];
+			var index = levels.indexOf('.'+name);
+			if (index > -1) {
+			    levels.splice(index, 1);
+			}
+			$("#"+ name).toggleClass("select");
+			$(levels.toString()).toggleClass('hidden');
+      var hidMaleCount = $('.Male:visible').length;
+      $(".numMale").html(hidMaleCount)      
+      var hidFemaleCount = $('.Female:visible').length;
+      $(".numFem").html(hidFemaleCount)
+      var hidUnCount = $('.Undefined:visible').length;
+      $(".numUn").html(hidUnCount)
+
+       console.log('male, female, undefined- ' +hidMaleCount+', '+hidFemaleCount+', '+hidUnCount);
+  
+		});
+
+
+
+}
+
+
+
+</script>
+</body>
+
+</html>
